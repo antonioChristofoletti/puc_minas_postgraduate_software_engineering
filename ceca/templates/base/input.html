@@ -1,0 +1,12 @@
+{% load widget_tweaks %}
+{{ input.label_tag }}
+
+{% if input.errors %}
+    {% render_field input class+="is-invalid" class+=extra_css_classes title=input.label %}
+{% elif form.is_bound %}
+    {% render_field input class+="is-valid" class+=extra_css_classes title=input.label %}
+{% else %}
+    {% render_field input class+=extra_css_classes title=input.label%}
+{% endif %}
+
+<div class="invalid-feedback">{{ input.errors|join:", "}}</div>

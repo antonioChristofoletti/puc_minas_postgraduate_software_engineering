@@ -1,0 +1,120 @@
+{% extends 'base/template.html' %}
+{% load static %}
+
+{% block feature %}
+<div class="container-fluid" style="">
+    <div class="mx-1">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active" aria-current="page">Equipments</li>
+                <li class="breadcrumb-item active" aria-current="page">Overview</li>
+            </ol>
+        </nav>
+        <div class="d-flex flex-wrap justify-content-between align-items-center">
+            <div>
+                <p class="h3 mt-3">Equipments</p>
+            </div>
+            <div>
+                <a class="btn btn-outline-dark" href="{% url 'equipment_manage_create' %}" role="button">Add Equipment</a>
+            </div>
+        </div>
+        {% include 'base/messages.html' %}
+        <form class="row row-cols-lg-auto g-3 align-items-end" onSubmit="JavaScript:btn_search_table(event)">
+            <div class="col-12">
+                <label for="txt_hostname" class="form-label">Hostname</label>
+                <input type="text" class="form-control" id="txt_hostname" placeholder="Hostname"
+                       data-table-search-field="hostname">
+            </div>
+            <div class="col-12">
+                <div>
+                    <label for="cmb_search_status" class="form-label">Status</label>
+                </div>
+                <select class="form-select" id="cmb_search_status" data-table-search-field="status" multiple data-multiplechoice>
+                    {% for k, v in equip_status_list %}
+                    <option value="{{ k }}">{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <div>
+                    <label for="cmb_search_vendor" class="form-label">Vendor</label>
+                </div>
+                <select class="form-select" id="cmb_search_vendor" data-table-search-field="model__vendor__id" multiple data-multiplechoice>
+                    {% for vendor in vendor_list %}
+                    <option value="{{ vendor.id }}">{{ vendor.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <div>
+                    <label for="cmb_search_model" class="form-label">Models</label>
+                </div>
+                <select class="form-select" id="cmb_search_model" data-table-search-field="model__id" multiple data-multiplechoice>
+                    {% for model in model_list %}
+                    <option value="{{ model.id }}">{{ model.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-outline-dark">Search</button>
+            </div>
+        </form>
+        <div class="border mt-3"></div>
+        <div class="mt-3">
+            <table class="table table-striped dt-responsive nowrap" style="width:100%;" id="tbl_equipments">
+                {% csrf_token %}
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Hostname</th>
+                    <th>IP</th>
+                    <th>Model ID</th>
+                    <th>Model</th>
+                    <th>Vendor ID</th>
+                    <th>Vendor</th>
+                    <th>Updated by</th>
+                    <th>Date Update</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_delete_equipment" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modal_delete_equipment_title">title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-primary" onclick="btn_modal_delete_equipment_save(event)">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal_restore_equipment" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modal_restore_equipment_title">title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-primary" onclick="btn_modal_restore_equipment_save(event)">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'templates/equipment/equipment_list/script.js' %}"></script>
+{% endblock %}

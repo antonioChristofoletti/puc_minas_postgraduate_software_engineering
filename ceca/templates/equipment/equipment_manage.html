@@ -1,0 +1,182 @@
+{% extends 'base/template.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'templates/equipment/equipment_manage/style.css' %}">
+{% endblock %}
+
+{% block feature %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Equipments</li>
+            <li class="breadcrumb-item" aria-current="page">
+                <a href="{% url 'equipment_list' %}">Overview</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </ol>
+    </nav>
+    <div class="d-flex flex-wrap justify-content-between align-items-center">
+        <div>
+            <p class="h3 mt-3">Equipments</p>
+        </div>
+    </div>
+    {% include 'base/messages.html' %}
+    <div class="container d-flex flex-column align-items-center">
+        {% if request.resolver_match.kwargs.pk is not None %}
+            <form action="{% url 'equipment_manage_update' request.resolver_match.kwargs.pk %}" method="POST" onSubmit="JavaScript:btn_save_equipment(event)" style="width: 100%; overflow: hidden;">
+        {% else %}
+            <form action="{% url 'equipment_manage_create' %}" method="POST" onSubmit="JavaScript:btn_save_equipment(event)" style="width: 100%; overflow: hidden;">
+        {% endif %}
+            {% csrf_token %}
+            {% for hidden in equipment_form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+            <div class="d-flex flex-row justify-content-end mb-3">
+                <a class="btn btn-outline-secondary me-2" href="{% url 'equipment_list' %}" role="button">Cancel</a>
+                <button type="submit" class="btn btn-primary px-3">Save</button>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-2 mb-3">
+                    <div class="form-group">
+                        {% if equipment_form.id is not None and equipment_form.id.value is not None %}
+                            {{ equipment_form.id }}
+                            {{ equipment_form.id.value }}
+                        {% else %}
+                            <label class="control-label" for="txt_id">ID</label>
+                            <input type="text" class="form-control" name="txt_id" id="txt_id" aria-describedby="ID" readonly value="{{ request.resolver_match.kwargs.pk }}">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 mb-3">
+                    {% include 'base/input.html' with input=equipment_form.hostname extra_css_classes='form-control' form=equipment_form only %}
+                </div>
+                <div class="col-12 col-md-3 mb-3">
+                    {% include 'base/input.html' with input=equipment_form.ip extra_css_classes='form-control' form=equipment_form only %}
+                </div>
+                <div class="col-12 col-md-2 mb-3">
+                    {% include 'base/input.html' with input=equipment_form.model extra_css_classes='form-select' form=equipment_form only %}
+                </div>
+                <div class="col-12 col-md-2 mb-3">
+                    {% include 'base/input.html' with input=equipment_form.os_version extra_css_classes='form-control' form=equipment_form only %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    {% include 'base/input.html' with input=equipment_form.observation extra_css_classes='form-control' form=equipment_form only %}
+                </div>
+            </div>
+
+            <div id="port_form_set">
+                {{ port_form_set.management_form }}
+                {% for form in port_form_set.forms %}
+                <div>
+                    {{ form.id }}
+                    {{ form.port }}
+                    {{ form.observation }}
+                    {{ form.status }}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="mt-4">
+                <button type="button" class="btn btn-outline-dark mb-4" onclick="btn_port_item_call_modal_add(event)">Add Port</button>
+
+                <table id="tbl_ports" class="table table-striped dt-responsive nowrap" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            {% for key, value in port_form_set.form.base_fields.items %}
+                                <th>{{ key|capfirst }}</th>
+                            {% endfor %}
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    {% for form in port_form_set.forms %}
+                        <tr>
+                            <td>{{ form.id.value }}</td>
+                            <td>{{ form.port.value }}</td>
+                            <td>{{ form.observation.value }}</td>
+                            <td>{{ form.status.value }}</td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_add_edit_port" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modal_add_edit_port_title">Port</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="form_add_edit_port" onSubmit="JavaScript:btn_add_edit_port_save(event)">
+          <div class="modal-body">
+              <div class="row mb-3">
+                <div class="col-12 col-md-2">
+                    <label for="txt_modal_port_id" class="col-form-label">ID</label>
+                    <input type="text" class="form-control" id="txt_modal_port_id" value="" readonly>
+                </div>
+                <div class="col-12 col-md-10">
+                    <label for="txt_modal_port_port" class="col-form-label">Port</label>
+                    <input type="text" class="form-control" id="txt_modal_port_port" value="" placeholder="port" required>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                    <label for="txt_modal_observation" class="col-form-label">Observations</label>
+                    <textarea class="form-control" id="txt_modal_observation" value="" placeholder="Observation" rows="3"></textarea>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal_delete_port" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modal_delete_port_title">title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-primary" onclick="btn_modal_delete_port_save(event)">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal_restore_port" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modal_restore_port_title">title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-primary" onclick="btn_modal_restore_port_save(event)">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'templates/equipment/equipment_manage/script.js' %}"></script>
+{% endblock %}
+
+{% endblock %}

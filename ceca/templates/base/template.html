@@ -1,0 +1,222 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>CECA</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/icons/font/bootstrap-icons.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'datatable/cdn.datatables.net_v_bs5_dt-1.13.4_r-2.4.1_datatables.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap_multiselect/bootstrap-multiselect-1.1.2.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'templates/base/template/style.css' %}">
+
+    {% block styles %}{% endblock %}
+</head>
+<body>
+
+<div class="offcanvas offcanvas-start" tabindex="-1"
+     id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0 h-100">
+        <div class="d-flex flex-column justify-content-between h-100 p-0">
+            <div>
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="mb-1">
+                        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed fw-bold"
+                                data-bs-toggle="collapse" data-bs-target="#home-collapse"
+                                aria-expanded="true">
+
+                            <img class="me-1"
+                                 src="{% static 'bootstrap/icons/hdd-rack-blue.svg' %}"
+                                 width="30"
+                                 height="24">
+                            Equipments
+                        </button>
+                        <div class="collapse show " id="home-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                <li class="d-flex flex-column">
+                                    <a href="{% url 'equipment_list' %}"
+                                       class="link-body-emphasis d-inline-flex text-decoration-none rounded text-dark menu-option-highlight">
+                                        Overview
+                                    </a>
+                                </li>
+                                <li class="d-flex flex-column">
+                                    <a href="#"
+                                       class="link-body-emphasis d-inline-flex text-decoration-none rounded text-dark menu-option-highlight">
+                                        Allocation
+                                    </a>
+                                </li>
+                                <li class="d-flex flex-column">
+                                    <a href="#"
+                                       class="link-body-emphasis d-inline-flex text-decoration-none rounded text-dark menu-option-highlight">
+                                        Client
+                                    </a>
+                                </li>
+                                <li class="d-flex flex-column">
+                                    <a href="#"
+                                       class="link-body-emphasis d-inline-flex text-decoration-none rounded text-dark menu-option-highlight">
+                                        Model
+                                    </a>
+                                </li>
+                                <li class="d-flex flex-column">
+                                    <a href="#"
+                                       class="link-body-emphasis d-inline-flex text-decoration-none rounded text-dark menu-option-highlight">
+                                        Vendor
+                                    </a>
+                                </li>
+                                <li class="d-flex flex-column">
+                                    <a href="#"
+                                       class="link-body-emphasis d-inline-flex text-decoration-none rounded text-dark menu-option-highlight">
+                                        Type Model
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="border-top my-1"></li>
+                    <li class="mb-1">
+                        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed fw-bold"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#dashboard-collapse"
+                                aria-expanded="false">
+                            <img class="me-1"
+                                 src="{% static 'bootstrap/icons/hdd-network-blue.svg' %}"
+                                 width="30"
+                                 height="24">
+                            Automations
+                        </button>
+                    </li>
+                    <li class="border-top my-1"></li>
+                    <li class="mb-1">
+                        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed fw-bold"
+                                data-bs-toggle="collapse" data-bs-target="#account-collapse"
+                                aria-expanded="false">
+                            <img class="me-1"
+                                 src="{% static 'bootstrap/icons/person-square-blue.svg' %}"
+                                 width="30"
+                                 height="24">
+                            Users
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="dropdown border-top p-2">
+                <a href="#"
+                   class="d-flex align-items-center link-body-emphasis text-decoration-none text-dark"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+
+                    <img class="d-inline-block align-text-middle me-2"
+                         src="{% static 'bootstrap/icons/person-circle-grey.svg' %}"
+                         alt="" width="50" height="40">
+
+                    <strong>{{user.username|title}}</strong>
+                </a>
+                <ul class="dropdown-menu text-small shadow">
+                    <li>
+                        <a class="dropdown-item" data-bs-toggle="modal"
+                           data-bs-target="#id_modal_signout">Sign
+                            out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav class="navbar navbar-dark bg-primary">
+            <div class="container-fluid">
+                <div>
+                    <button class="navbar-toggler" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions"
+                            role="button">
+                        <span class="navbar-toggler-icon" data-bs-toggle="offcanvas"
+                              data-bs-target="#offcanvasWithBothOptions"></span>
+                    </button>
+                    <a class="navbar-brand fw-bolder ms-2" href="#">
+                        <img class="d-inline-block align-text-middle"
+                             src="{% static 'bootstrap/icons/hdd-rack-white.svg' %}"
+                             alt="" width="40" height="32">
+                        CECA
+                    </a>
+                </div>
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#id_modal_signout">
+                    Sign out
+                </button>
+            </div>
+        </nav>
+    </div>
+</div>
+<div class="mt-2" style="overflow-x: hidden;">
+    {% block feature %}{% endblock %}
+</div>
+
+<div class="modal fade" id="id_modal_signout" tabindex="-1" aria-labelledby="id_modal_signout_label"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="id_modal_signout_label">Confirm Sign out</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <form action="{% url 'signout' %}" method="POST" class="d-flex">
+                    {% csrf_token %}
+                    <button class="btn btn-primary" type="submit">Sign out</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_message" tabindex="-1" aria-labelledby="modal_message_label"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modal_message_title">message</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'jquery/jquery-3.7.0.min.js' %}"></script>
+
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'bootstrap_multiselect/bootstrap-multiselect-1.1.2.min.js' %}"></script>
+
+<script src="{% static 'datatable/cdn.datatables.net_v_bs5_dt-1.13.4_r-2.4.1_datatables.min.js' %}"></script>
+<script src="{% static 'datatable/plugins/datarender_ellipsis.js' %}"></script>
+
+<script src="{% static 'jquery_masks/jquery_mask_1.14.16.min.js' %}"></script>
+
+<script src="{% static 'momentjs/momentjs.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'templates/base/template/script.js' %}"></script>
+
+<script>
+    const url_login = '{% url 'login' %}'
+    const url_equipment_get = '{% url 'equipment_get' %}'
+    const url_equipment_manage_create = '{% url 'equipment_manage_create' %}'
+    const url_equipment_manage_update = '{% url 'equipment_manage_update' 0 %}'
+    const url_equipment_delete = '{% url 'equipment_delete' 0 %}'
+    const url_equipment_restore = '{% url 'equipment_restore' 0 %}'
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>
